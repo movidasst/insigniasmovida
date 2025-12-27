@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Insignias SST DAO</title>
+    <!-- Tipografía Profesional Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta Azul Plomo & Midnight Navy */
+            --primary: #1a202c; 
+            --primary-dark: #0f172a;
+            --secondary: #455a64; /* Azul Plomo */
+            --accent-indigo: #6366f1;
+            --bg: #f8fafc;
+            --white: rgba(255, 255, 255, 0.98);
+            --text: #0f172a;
+            --text-light: #546e7a;
+            --error: #ef4444;
+            --success: #166534;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(69, 90, 100, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(26, 32, 44, 0.08) 0px, transparent 50%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .sst-container { 
+            max-width: 900px; 
+            width: 100%;
+            padding: 60px 40px; 
+            background: var(--white); 
+            border-radius: 40px; 
+            box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.08); 
+            text-align: center;
+            border: 1px solid rgba(207, 216, 220, 0.5);
+            backdrop-filter: blur(15px);
+            box-sizing: border-box;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .dao-logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 35px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.04));
+        }
+
+        .atomic-header {
+            margin-bottom: 25px;
+            line-height: 1.1;
+        }
+
+        .header-part-1 {
+            display: block;
+            font-weight: 800;
+            font-size: 36px; 
+            letter-spacing: -1.5px;
+            color: var(--accent-indigo);
+            text-transform: uppercase;
+        }
+
+        .header-part-2 {
+            display: block;
+            font-weight: 700;
+            font-size: 30px;
+            letter-spacing: -0.5px;
+            color: var(--secondary);
+            opacity: 0.9;
+        }
+
+        h2 { 
+            color: var(--text); 
+            margin-bottom: 30px; 
+            font-weight: 600; 
+            font-size: 18px; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .section-title {
+            text-align: left;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 40px 0 20px 0;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .sst-input { 
+            width: 100%; padding: 20px; border: 2px solid #e2e8f0; border-radius: 20px; 
+            margin-bottom: 25px; font-size: 16px; outline: none; transition: var(--transition);
+            box-sizing: border-box;
+            background: #fff;
+            font-family: inherit;
+        }
+
+        .sst-btn { 
+            background: var(--primary); 
+            color: white; border: none; padding: 20px 40px; 
+            border-radius: 20px; font-size: 15px; font-weight: 700; cursor: pointer; 
+            width: 100%; transition: var(--transition); 
+            box-shadow: 0 12px 20px -5px rgba(15, 23, 42, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+            gap: 25px; 
+            margin-bottom: 30px;
+        }
+        
+        .badge-card { 
+            border: 1px solid #e2e8f0; 
+            border-radius: 30px; 
+            padding: 35px; 
+            transition: var(--transition); 
+            background: #fff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .badge-card.is-owned { border-color: #dcfce7; background: #fdfdfd; }
+        
+        .badge-card img { 
+            width: 130px; height: 130px; object-fit: contain; 
+            margin-bottom: 25px; border-radius: 50%; 
+            background: #fdfdfd; 
+            padding: 15px;
+        }
+
+        .badge-card h4 { margin: 0 0 10px 0; font-size: 17px; color: var(--text); font-weight: 700; line-height: 1.3; }
+        .badge-card span { font-size: 12px; color: var(--text-light); display: block; margin-bottom: 25px; min-height: 36px; }
+
+        .action-btn { 
+            margin-top: auto; padding: 16px; width: 100%; border-radius: 16px; 
+            font-weight: 700; cursor: pointer; border: none; font-size: 12px; 
+            transition: var(--transition); text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn-emitir { background: var(--primary); color: white; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-ver { background: #f1f5f9; color: var(--text); border: 1px solid #e2e8f0; margin-bottom: 8px; }
+        .btn-linkedin { background: #0077b5; color: white; }
+
+        .status-pill {
+            position: absolute; top: 20px; right: 20px;
+            padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .pill-owned { background: #dcfce7; color: #166534; }
+        .pill-pending { background: #fef2f2; color: #991b1b; }
+
+        .wallet-promo {
+            margin: 40px 0;
+            padding: 28px;
+            background: #f8fafc;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-align: left;
+        }
+        .wallet-icon { width: 32px; height: 32px; color: var(--secondary); flex-shrink: 0; }
+        .wallet-promo a { color: var(--primary); font-weight: 800; text-decoration: none; border-bottom: 2px solid rgba(26, 32, 44, 0.15); }
+
+        .hidden { display: none; }
+        
+        #loadingMsg { margin-top: 30px; font-weight: 800; color: var(--secondary); font-size: 14px; letter-spacing: 2px; }
+
+        .sst-footer { margin-top: 60px; padding-top: 35px; border-top: 1px solid #e2e8f0; color: var(--text-light); font-size: 12px; line-height: 2; text-align: center; }
+
+        #customModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(10px); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-box { background: white; padding: 45px; border-radius: 35px; width: 90%; max-width: 420px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="sst-container">
+    <img src="https://assets.poap.xyz/ae80dd44-a4b8-4a90-9d76-2da198a1f6fc.png" alt="SST DAO Logo" class="dao-logo">
+    <div class="atomic-header">
+        <span class="header-part-1">La Movida de SST</span>
+        <span class="header-part-2">DAO Network</span>
+    </div>
+    <h2>Portal de Insignias</h2>
+    
+    <div id="step1">
+        <p>Introduce tu correo institucional para visualizar tus certificaciones.</p>
+        <input type="email" id="emailInput" placeholder="tu-correo@empresa.com" class="sst-input">
+        <button type="button" onclick="consultarInsignias()" class="sst-btn">BUSCAR MIS INSIGNIAS</button>
+        <div class="wallet-promo">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+            <div>
+                ¿No tienes una billetera digital (Wallet)? <a href="https://dao.movidasst.com/" target="_blank">Genérala aquí</a>
+            </div>
+        </div>
+        <div id="error1" class="hidden" style="color:var(--error); margin-top:20px; font-weight:600;"></div>
+    </div>
+
+    <div id="step2" class="hidden">
+        <div id="ownedSection" class="hidden">
+            <div class="section-title">✅ Tus Credenciales Activas</div>
+            <div id="ownedList" class="badge-grid"></div>
+        </div>
+
+        <div id="pendingSection" class="hidden">
+            <div class="section-title">🚀 Disponibles para Emitir</div>
+            <div id="pendingList" class="badge-grid"></div>
+        </div>
+
+        <button type="button" onclick="location.reload()" style="margin-top:50px; background:transparent; border:none; color:var(--text-light); cursor:pointer; font-weight:700; text-decoration:underline; font-size:14px;">← VOLVER AL BUSCADOR</button>
+    </div>
+
+    <div id="step3" class="hidden">
+        <div style="background:#f0fdf4; padding:50px; border-radius:35px; color:var(--success); border:1px solid #dcfce7;">
+            <div style="font-size:70px; margin-bottom:25px;">✨</div>
+            <h3 style="font-weight:800; font-size:26px;">¡Emisión en Proceso!</h3>
+            <p>Tu insignia se está registrando en la red.</p>
+            <div id="linksArea" style="margin-top:35px; display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+        <button type="button" onclick="location.reload()" style="margin-top:30px; background:transparent; border:none; color:var(--primary); font-weight:800; cursor:pointer;">FINALIZAR</button>
+    </div>
+
+    <div id="loadingMsg" class="hidden">SINCRONIZANDO CON LA DAO...</div>
+
+    <div class="sst-footer">
+        Elaborado por: <strong>David Linares Brea</strong><br>
+        <a href="https://www.movidasst.com" target="_blank" style="color:inherit; text-decoration:none;">www.movidasst.com</a>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://motor-sst.onrender.com"; 
+    let currentBadges = {};
+    const COMPANY_ID = "80061757"; 
+    const CONTRACT_ADDRESS = "0xE0E07Bbdc1fEeFf774b5F40E856cE2A218501167";
+
+    function safeOpen(url) {
+        if (!url || url === '#' || url === 'undefined') return;
+        let finalUrl = url.trim();
+        if (!finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
+        window.open(finalUrl, '_blank');
+    }
+
+    function customConfirm(nombre, callback) {
+        if (document.getElementById('customModal')) return;
+        const modal = document.createElement('div');
+        modal.id = 'customModal';
+        modal.innerHTML = `
+            <div class="modal-box">
+                <h3 style="font-weight:800; color:var(--primary);">Confirmar Emisión</h3>
+                <p>¿Emitir la insignia: <strong style="color:var(--accent-indigo);">${nombre}</strong>?</p>
+                <div style="margin-top:35px; display:flex; gap:15px;">
+                    <button id="modalNo" style="flex:1; padding:18px; border:none; background:#f1f5f9; border-radius:15px; font-weight:700;">No</button>
+                    <button id="modalYes" style="flex:1; padding:18px; border:none; background:var(--primary); color:white; border-radius:15px; font-weight:700;">Sí, emitir</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.getElementById('modalNo').onclick = () => modal.remove();
+        document.getElementById('modalYes').onclick = () => { modal.remove(); callback(); };
+    }
+
+    async function consultarInsignias() {
+        const email = document.getElementById('emailInput').value.trim();
+        if(!email.includes('@')) return;
+        
+        document.getElementById('loadingMsg').classList.remove('hidden');
+        try {
+            const res = await fetch(`${API_URL}/api/consultar-usuario`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if(data.success) {
+                currentBadges = data.badges;
+                renderBadges(data.badges);
+                cambiarPaso('step2');
+            } else { mostrarError(data.error); }
+        } catch(e) { mostrarError("Error de conexión."); }
+        document.getElementById('loadingMsg').classList.add('hidden');
+    }
+
+    function renderBadges(badges) {
+        const ownedList = document.getElementById('ownedList');
+        const pendingList = document.getElementById('pendingList');
+        ownedList.innerHTML = ""; pendingList.innerHTML = "";
+
+        let hasOwned = false; let hasPending = false;
+        
+        Object.keys(badges).forEach(id => {
+            const b = badges[id];
+            const card = document.createElement('div');
+            card.className = `badge-card ${b.owned ? 'is-owned' : ''}`;
+            const osLink = `https://opensea.io/assets/polygon/${CONTRACT_ADDRESS}/${id}`;
+            // El backend ya devuelve el link de LinkedIn construido correctamente
+            const lnLink = b.linkedin; 
+
+            if (b.owned) {
+                hasOwned = true;
+                card.innerHTML = `
+                    <div class="status-pill pill-owned">ACTIVA</div>
+                    <img src="${b.image}"><h4>${b.name}</h4><span>${b.description}</span>
+                    <button onclick="safeOpen('${osLink}')" class="action-btn btn-ver">✅ VER EN OPENSEA</button>
+                    <button onclick="safeOpen('${lnLink}')" class="action-btn btn-linkedin">💼 AÑADIR A LINKEDIN</button>
+                `;
+                ownedList.appendChild(card);
+            } else {
+                hasPending = true;
+                card.innerHTML = `
+                    <div class="status-pill pill-pending">PENDIENTE</div>
+                    <img src="${b.image}"><h4>${b.name}</h4><span>${b.description}</span>
+                    <button onclick="prepararEmision('${id}', '${b.name}')" class="action-btn btn-emitir">🚀 EMITIR AHORA</button>
+                `;
+                pendingList.appendChild(card);
+            }
+        });
+
+        document.getElementById('ownedSection').classList.toggle('hidden', !hasOwned);
+        document.getElementById('pendingSection').classList.toggle('hidden', !hasPending);
+    }
+
+    function prepararEmision(id, nombre) {
+        customConfirm(nombre, () => ejecutarEmision(id));
+    }
+
+    async function ejecutarEmision(id) {
+        document.getElementById('loadingMsg').classList.remove('hidden');
+        const wallet = prompt("Por favor, confirma tu dirección de Wallet (0x...) para recibir la insignia:");
+        
+        if (!wallet || !wallet.startsWith("0x")) {
+            document.getElementById('loadingMsg').classList.add('hidden');
+            alert("Dirección de wallet inválida. La operación ha sido cancelada.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/emitir-insignia`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ wallet, badgeId: id })
+            });
+            const data = await res.json();
+            if(data.success) {
+                document.getElementById('linksArea').innerHTML = `
+                    <button onclick="safeOpen('${data.opensea}')" class="sst-btn" style="background:#2081E2;">VER EN OPENSEA</button>
+                    <button onclick="safeOpen('${data.linkedin}')" class="sst-btn" style="background:#0077b5;">AÑADIR A LINKEDIN</button>
+                `;
+                cambiarPaso('step3');
+            } else { alert(data.error); }
+        } catch(e) { alert("Error en el envío."); }
+        document.getElementById('loadingMsg').classList.add('hidden');
+    }
+
+    function cambiarPaso(id) { 
+        ['step1', 'step2', 'step3'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden'); 
+    }
+    function mostrarError(msg) { 
+        const err = document.getElementById('error1');
+        err.innerText = "⚠️ " + msg; err.classList.remove('hidden');
+    }
+</script>
+</body>
+</html>
