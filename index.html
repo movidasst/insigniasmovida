@@ -272,6 +272,7 @@
 <script>
     const API_URL = "https://motor-sst.onrender.com"; 
     let currentBadges = {};
+    let userWallet = ""; // Variable global para almacenar la wallet
     const COMPANY_ID = "80061757"; 
     const CONTRACT_ADDRESS = "0xE0E07Bbdc1fEeFf774b5F40E856cE2A218501167";
 
@@ -282,6 +283,20 @@
         window.open(finalUrl, '_blank');
     }
 
+    function buildLinkedInLink(name, badgeId, certUrl, txHash = null) {
+        const certIdParam = txHash || `${CONTRACT_ADDRESS}-${badgeId}`;
+        const baseUrl = "https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME";
+        const params = [
+            `name=${encodeURIComponent(name)}`,
+            `organizationId=${COMPANY_ID}`,
+            `certId=${encodeURIComponent(certIdParam)}`,
+            `certUrl=${encodeURIComponent(certUrl)}`,
+            `issueYear=${new Date().getFullYear()}`,
+            `issueMonth=${new Date().getMonth() + 1}`
+        ];
+        return `${baseUrl}&${params.join('&')}`;
+    }
+
     function customConfirm(nombre, callback) {
         if (document.getElementById('customModal')) return;
         const modal = document.createElement('div');
@@ -290,6 +305,10 @@
             <div class="modal-box">
                 <h3 style="font-weight:800; color:var(--primary);">Confirmar Emisión</h3>
                 <p>¿Emitir la insignia: <strong style="color:var(--accent-indigo);">${nombre}</strong>?</p>
+                <div style="margin-top:15px; font-size:13px; color:var(--text-light); background:#f8fafc; padding:10px; border-radius:10px;">
+                    Se enviará a tu wallet registrada:<br>
+                    <span style="font-family:monospace; color:var(--primary); font-weight:700;">${userWallet}</span>
+                </div>
                 <div style="margin-top:35px; display:flex; gap:15px;">
                     <button id="modalNo" style="flex:1; padding:18px; border:none; background:#f1f5f9; border-radius:15px; font-weight:700;">No</button>
                     <button id="modalYes" style="flex:1; padding:18px; border:none; background:var(--primary); color:white; border-radius:15px; font-weight:700;">Sí, emitir</button>
@@ -314,6 +333,7 @@
             });
             const data = await res.json();
             if(data.success) {
+                userWallet = data.wallet; // GUARDAMOS LA WALLET AQUÍ
                 currentBadges = data.badges;
                 renderBadges(data.badges);
                 cambiarPaso('step2');
@@ -334,7 +354,6 @@
             const card = document.createElement('div');
             card.className = `badge-card ${b.owned ? 'is-owned' : ''}`;
             const osLink = `https://opensea.io/assets/polygon/${CONTRACT_ADDRESS}/${id}`;
-            // El backend ya devuelve el link de LinkedIn construido correctamente
             const lnLink = b.linkedin; 
 
             if (b.owned) {
@@ -367,11 +386,11 @@
 
     async function ejecutarEmision(id) {
         document.getElementById('loadingMsg').classList.remove('hidden');
-        const wallet = prompt("Por favor, confirma tu dirección de Wallet (0x...) para recibir la insignia:");
         
-        if (!wallet || !wallet.startsWith("0x")) {
+        // Usamos la wallet guardada automáticamente
+        if (!userWallet || !userWallet.startsWith("0x")) {
             document.getElementById('loadingMsg').classList.add('hidden');
-            alert("Dirección de wallet inválida. La operación ha sido cancelada.");
+            alert("No se encontró una wallet válida asociada a este correo.");
             return;
         }
 
@@ -379,7 +398,7 @@
             const res = await fetch(`${API_URL}/api/emitir-insignia`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ wallet, badgeId: id })
+                body: JSON.stringify({ wallet: userWallet, badgeId: id })
             });
             const data = await res.json();
             if(data.success) {
