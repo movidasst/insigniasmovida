@@ -239,12 +239,12 @@
 
     <div id="step2" class="hidden">
         <div id="ownedSection" class="hidden">
-            <div class="section-title">✅ Tus Credenciales Activas</div>
+            <div class="section-title">✅ Tus Credenciales Emitidas</div>
             <div id="ownedList" class="badge-grid"></div>
         </div>
 
         <div id="pendingSection" class="hidden">
-            <div class="section-title">🚀 Disponibles para Emitir</div>
+            <div class="section-title">🚀 Disponibles para Reclamar</div>
             <div id="pendingList" class="badge-grid"></div>
         </div>
 
@@ -269,71 +269,16 @@
     </div>
 </div>
 
-<!-- ======================================================= -->
-<!-- BOTÓN FLOTANTE ESTILO DAO: VOLVER AL HUB (MOVIDASST.COM) -->
-<!-- Copiar y pegar este bloque al final del body en cada subdominio -->
-<!-- ======================================================= -->
-
-<a href="https://www.movidasst.com" 
-   title="Volver al Hub Principal"
-   style="
-     position: fixed; 
-     bottom: 20px; 
-     right: 20px; 
-     background-color: #0f172a; /* Fondo Oscuro (Slate 900) */
-     color: #00b050;            /* Texto Verde Neón */
-     padding: 8px 16px;         /* Más pequeño */
-     border-radius: 8px;        /* Bordes técnicos */
-     text-decoration: none; 
-     font-family: 'Outfit', sans-serif, monospace; 
-     font-weight: 700; 
-     font-size: 12px;           /* Letra más pequeña */
-     letter-spacing: 0.5px;
-     border: 1px solid #00b050; /* Borde Verde Fino */
-     box-shadow: 0 0 10px rgba(0, 176, 80, 0.2); 
-     z-index: 9999; 
-     display: flex; 
-     align-items: center; 
-     gap: 8px; 
-     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-     backdrop-filter: blur(5px);
-   "
-   onmouseover="
-     this.style.transform='translateY(-2px)'; 
-     this.style.boxShadow='0 0 20px rgba(0, 176, 80, 0.5)'; 
-     this.style.backgroundColor='#00b050'; 
-     this.style.color='#ffffff';
-   " 
-   onmouseout="
-     this.style.transform='translateY(0)'; 
-     this.style.boxShadow='0 0 10px rgba(0, 176, 80, 0.2)'; 
-     this.style.backgroundColor='#0f172a'; 
-     this.style.color='#00b050';
-   "
->
-    <!-- Icono Hexágono/Nodo Pequeño -->
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-        <polyline points="7.5 4.21 12 12 16.5 4.21"></polyline>
-        <polyline points="7.5 19.79 12 12 16.5 19.79"></polyline>
-        <polyline points="3.29 12 12 12 20.71 12"></polyline>
-    </svg>
-    
-    <span>VOLVER</span>
-</a>
-
 <script>
     const API_URL = "https://motor-sst.onrender.com"; 
     let currentBadges = {};
-    let userWallet = ""; // Variable global para almacenar la wallet
+    let userWallet = ""; 
     const COMPANY_ID = "80061757"; 
     const CONTRACT_ADDRESS = "0xE0E07Bbdc1fEeFf774b5F40E856cE2A218501167";
 
     function safeOpen(url) {
         if (!url || url === '#' || url === 'undefined') return;
-        let finalUrl = url.trim();
-        if (!finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
-        window.open(finalUrl, '_blank');
+        window.open(url, '_blank');
     }
 
     function buildLinkedInLink(name, badgeId, certUrl, txHash = null) {
@@ -358,13 +303,13 @@
             <div class="modal-box">
                 <h3 style="font-weight:800; color:var(--primary);">Confirmar Emisión</h3>
                 <p>¿Emitir la insignia: <strong style="color:var(--accent-indigo);">${nombre}</strong>?</p>
-                <div style="margin-top:15px; font-size:13px; color:var(--text-light); background:#f8fafc; padding:10px; border-radius:10px;">
-                    Se enviará a tu wallet registrada:<br>
-                    <span style="font-family:monospace; color:var(--primary); font-weight:700;">${userWallet}</span>
+                <div style="margin-top:15px; font-size:13px; color:var(--text-light); background:#f8fafc; padding:15px; border-radius:15px; border: 1px dashed #cfd8dc;">
+                    Destino (Wallet vinculada):<br>
+                    <span style="font-family:monospace; color:var(--primary); font-weight:700; word-break: break-all;">${userWallet}</span>
                 </div>
                 <div style="margin-top:35px; display:flex; gap:15px;">
-                    <button id="modalNo" style="flex:1; padding:18px; border:none; background:#f1f5f9; border-radius:15px; font-weight:700;">No</button>
-                    <button id="modalYes" style="flex:1; padding:18px; border:none; background:var(--primary); color:white; border-radius:15px; font-weight:700;">Sí, emitir</button>
+                    <button id="modalNo" style="flex:1; padding:18px; border:none; background:#f1f5f9; border-radius:15px; font-weight:700; cursor:pointer;">No</button>
+                    <button id="modalYes" style="flex:1; padding:18px; border:none; background:var(--primary); color:white; border-radius:15px; font-weight:700; cursor:pointer;">Sí, emitir</button>
                 </div>
             </div>
         `;
@@ -375,9 +320,11 @@
 
     async function consultarInsignias() {
         const email = document.getElementById('emailInput').value.trim();
-        if(!email.includes('@')) return;
+        if(!email.includes('@')) { mostrarError("Email no válido."); return; }
         
         document.getElementById('loadingMsg').classList.remove('hidden');
+        document.getElementById('error1').classList.add('hidden');
+
         try {
             const res = await fetch(`${API_URL}/api/consultar-usuario`, {
                 method: 'POST',
@@ -386,12 +333,12 @@
             });
             const data = await res.json();
             if(data.success) {
-                userWallet = data.wallet; // GUARDAMOS LA WALLET AQUÍ
+                userWallet = data.wallet; 
                 currentBadges = data.badges;
                 renderBadges(data.badges);
                 cambiarPaso('step2');
             } else { mostrarError(data.error); }
-        } catch(e) { mostrarError("Error de conexión."); }
+        } catch(e) { mostrarError("Error de conexión con el motor."); }
         document.getElementById('loadingMsg').classList.add('hidden');
     }
 
@@ -399,7 +346,6 @@
         const ownedList = document.getElementById('ownedList');
         const pendingList = document.getElementById('pendingList');
         ownedList.innerHTML = ""; pendingList.innerHTML = "";
-
         let hasOwned = false; let hasPending = false;
         
         Object.keys(badges).forEach(id => {
@@ -412,7 +358,7 @@
             if (b.owned) {
                 hasOwned = true;
                 card.innerHTML = `
-                    <div class="status-pill pill-owned">ACTIVA</div>
+                    <div class="status-pill pill-owned">EMITIDA</div>
                     <img src="${b.image}"><h4>${b.name}</h4><span>${b.description}</span>
                     <button onclick="safeOpen('${osLink}')" class="action-btn btn-ver">✅ VER EN OPENSEA</button>
                     <button onclick="safeOpen('${lnLink}')" class="action-btn btn-linkedin">💼 AÑADIR A LINKEDIN</button>
@@ -421,7 +367,7 @@
             } else {
                 hasPending = true;
                 card.innerHTML = `
-                    <div class="status-pill pill-pending">PENDIENTE</div>
+                    <div class="status-pill pill-pending">DISPONIBLE</div>
                     <img src="${b.image}"><h4>${b.name}</h4><span>${b.description}</span>
                     <button onclick="prepararEmision('${id}', '${b.name}')" class="action-btn btn-emitir">🚀 EMITIR AHORA</button>
                 `;
@@ -440,10 +386,9 @@
     async function ejecutarEmision(id) {
         document.getElementById('loadingMsg').classList.remove('hidden');
         
-        // Usamos la wallet guardada automáticamente
         if (!userWallet || !userWallet.startsWith("0x")) {
             document.getElementById('loadingMsg').classList.add('hidden');
-            alert("No se encontró una wallet válida asociada a este correo.");
+            alert("No se encontró una wallet válida vinculada. Contacta soporte.");
             return;
         }
 
@@ -455,13 +400,15 @@
             });
             const data = await res.json();
             if(data.success) {
+                const badgeInfo = currentBadges[id];
+                const finalLnLink = buildLinkedInLink(badgeInfo.name, id, data.opensea, data.txHash);
                 document.getElementById('linksArea').innerHTML = `
-                    <button onclick="safeOpen('${data.opensea}')" class="sst-btn" style="background:#2081E2;">VER EN OPENSEA</button>
-                    <button onclick="safeOpen('${data.linkedin}')" class="sst-btn" style="background:#0077b5;">AÑADIR A LINKEDIN</button>
+                    <button onclick="safeOpen('${data.opensea}')" class="sst-btn" style="background:#2081E2; cursor:pointer;">VER EN OPENSEA</button>
+                    <button onclick="safeOpen('${finalLnLink}')" class="sst-btn" style="background:#0077b5; cursor:pointer;">AÑADIR A LINKEDIN</button>
                 `;
                 cambiarPaso('step3');
             } else { alert(data.error); }
-        } catch(e) { alert("Error en el envío."); }
+        } catch(e) { alert("Error en el envío. Revisa tu conexión."); }
         document.getElementById('loadingMsg').classList.add('hidden');
     }
 
